@@ -105,6 +105,9 @@ function stateFor(room, viewerId) {
     useBank: room.useBank,
     limit: room.limit,
     poolCount: room.questions.length + (room.useBank ? BANK.length : 0),
+    freshCount:
+      room.questions.filter((q) => !room.used.has(q.text)).length +
+      (room.useBank ? BANK.filter(([text]) => !room.used.has(text)).length : 0),
     myQuestions: myQuestions.map((q) => ({ id: q.id, text: q.text, answer: q.answer })),
     qNumber: room.qIndex + 1,
     qTotal: room.order.length,
@@ -201,7 +204,7 @@ io.on('connection', (socket) => {
 
     let room = rooms.get(code);
     if (!room) {
-      room = { code, players: [], questions: [], order: [], qIndex: -1, starter: 0, round: null, phase: 'lobby', useBank: true, limit: DEFAULT_LIMIT };
+      room = { code, players: [], questions: [], order: [], qIndex: -1, starter: 0, round: null, phase: 'lobby', useBank: true, limit: DEFAULT_LIMIT, used: new Set() };
       rooms.set(code, room);
     }
 
@@ -279,7 +282,17 @@ io.on('connection', (socket) => {
     const pool = room.questions.concat(bank);
     if (!pool.length) return ack && ack({ ok: false, error: 'Cadastrem uma pergunta ou liguem o banco de perguntas.' });
     room.players.forEach((p) => (p.score = 0));
-    room.order = shuffle(pool).slice(0, room.limit); // sorteia as perguntas da partida
+    // Sorteia sem repetir: primeiro as perguntas que ainda não saíram nesta sala.
+    const fresh = pool.filter((q) => !room.used.has(q.text));
+    let pick = shuffle(fresh).slice(0, room.limit);
+    if (pick.length < room.limit) {
+      // Acabaram as inéditas: completa com as já usadas e recomeça o ciclo.
+      const rest = shuffle(pool.filter((q) => !pick.includes(q))).slice(0, room.limit - pick.length);
+      room.used = new Set();
+      pick = shuffle(pick.concat(rest));
+    }
+    pick.forEach((q) => room.used.add(q.text));
+    room.order = pick;
     room.qIndex = 0;
     room.starter = 0;
     startQuestion(room);

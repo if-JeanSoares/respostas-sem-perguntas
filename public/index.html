@@ -227,7 +227,7 @@ function lobbyView() {
           ${[5, 10, 15, 20, 30, 50].map((n) => `<option value="${n}" ${S.limit === n ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
         <p class="hint">${S.poolCount
-          ? `Serão sorteadas <b>${Math.min(S.limit, S.poolCount)}</b> de ${S.poolCount} perguntas disponíveis.`
+          ? `Serão sorteadas <b>${Math.min(S.limit, S.poolCount)}</b> de ${S.poolCount} perguntas. Ainda não saíram nesta sala: <b>${S.freshCount}</b>.`
           : 'Nenhuma pergunta disponível: cadastre uma ou ligue o banco.'}</p>
         <div class="err" id="serr"></div>
         <button class="yellow" style="width:100%;margin-top:8px" ${S.poolCount ? '' : 'disabled'} onclick="startGame()">Começar partida</button>
