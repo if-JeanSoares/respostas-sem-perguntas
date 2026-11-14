@@ -56,7 +56,7 @@ const assert = (c, m) => { if (!c) { console.error('FALHOU:', m); process.exit(1
     if (d.st.phase !== 'roundEnd') { lens.push(d.st.wordCount); d.emit('giveUp'); await sleep(15); }
     if (d.st.phase === 'roundEnd') { d.emit('next'); await sleep(15); }
   }
-  assert(lens.length === 10 && lens[9] === Math.max(...lens), 'última pergunta é a mais longa: ' + lens.join(','));
+  assert(lens.length === 10 && lens[9] === Math.max(...lens) && lens[9] >= 19 && Math.min(...lens) >= 8, 'perguntas com 8+ palavras e final com 19+: ' + lens.join(','));
   // Sem repetição entre partidas da mesma sala
   const e = client('Edu'); await sleep(200);
   await emit(e, 'join', { code: 'repete', name: 'Edu' });

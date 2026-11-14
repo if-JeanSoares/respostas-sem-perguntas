@@ -18,7 +18,7 @@ const rooms = new Map();
 const newId = () => crypto.randomBytes(8).toString('hex');
 
 // Banco de perguntas pronto (sem autor): a resposta é conferida automaticamente.
-const BANK = require('./bank.js'); // itens { key, texts: [redações], answer }
+const { BANK, FINALS } = require('./bank.js'); // itens { key, texts: [redações], answer }
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
 
@@ -101,13 +101,13 @@ function stateFor(room, viewerId) {
       name: p.name,
       count: room.questions.filter((q) => q.authorId === p.id).length,
     })),
-    bankSize: BANK.length,
+    bankSize: BANK.length + FINALS.length,
     useBank: room.useBank,
     limit: room.limit,
-    poolCount: room.questions.length + (room.useBank ? BANK.length : 0),
+    poolCount: room.questions.length + (room.useBank ? BANK.length + FINALS.length : 0),
     freshCount:
       room.questions.filter((q) => !room.used.has(q.text)).length +
-      (room.useBank ? BANK.filter((q) => !room.used.has(q.key)).length : 0),
+      (room.useBank ? BANK.concat(FINALS).filter((q) => !room.used.has(q.key)).length : 0),
     myQuestions: myQuestions.map((q) => ({ id: q.id, text: q.text, answer: q.answer })),
     qNumber: room.qIndex + 1,
     qTotal: room.order.length,
@@ -281,15 +281,21 @@ io.on('connection', (socket) => {
     if (!pool.length) return ack && ack({ ok: false, error: 'Cadastrem uma pergunta ou liguem o banco de perguntas.' });
     room.players.forEach((p) => (p.score = 0));
     // Sorteia sem repetir: primeiro as perguntas que ainda não saíram nesta sala.
-    const fresh = pool.filter((q) => !room.used.has(q.key || q.text));
-    let pick = shuffle(fresh).slice(0, room.limit);
-    if (pick.length < room.limit) {
-      // Acabaram as inéditas: completa com as já usadas e recomeça o ciclo.
-      const rest = shuffle(pool.filter((q) => !pick.includes(q))).slice(0, room.limit - pick.length);
-      room.used = new Set();
-      pick = shuffle(pick.concat(rest));
-    }
-    pick.forEach((q) => room.used.add(q.key || q.text));
+    const draw = (list, n) => {
+      const fresh = list.filter((q) => !room.used.has(q.key || q.text));
+      let pick = shuffle(fresh).slice(0, n);
+      if (pick.length < n) {
+        // Acabaram as inéditas desta lista: libera as já usadas e completa.
+        list.forEach((q) => room.used.delete(q.key || q.text));
+        pick = pick.concat(shuffle(list.filter((q) => !pick.includes(q))).slice(0, n - pick.length));
+      }
+      pick.forEach((q) => room.used.add(q.key || q.text));
+      return shuffle(pick);
+    };
+    // Com o banco ligado, a última vaga da partida é de uma pergunta final (bem longa).
+    const withFinal = room.useBank && room.limit > 1;
+    const pick = draw(pool, withFinal ? room.limit - 1 : room.limit);
+    if (withFinal) pick.push(draw(FINALS, 1)[0]);
     // Pergunta do banco: sorteia uma das redações, de preferência uma que ainda não apareceu.
     room.order = pick.map((q) => {
       if (!q.texts) return q;
@@ -303,7 +309,7 @@ io.on('connection', (socket) => {
     if (room.order.length > 1) {
       let longest = 0;
       room.order.forEach((q, i) => {
-        if (tokenize(q.text).length > tokenize(room.order[longest].text).length) longest = i;
+        if (tokenize(q.text).length >= tokenize(room.order[longest].text).length) longest = i;
       });
       room.order.push(room.order.splice(longest, 1)[0]);
     }

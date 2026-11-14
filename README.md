@@ -34,6 +34,7 @@ Para testar sozinho, abra duas ou três abas anônimas, cada uma com um nome.
 
 - `server.js`: servidor e regras do jogo (Express + Socket.IO)
 - `questions.js`: perguntas escritas à mão (adicione linhas para aumentar)
+- `finals.js`: perguntas finais, bem longas, que fecham a partida
 - `bank.js`: monta o banco completo, gerando perguntas a partir de tabelas (capitais, Copas, elementos, jogos...)
 - `public/index.html`: a tela do jogo
 - `test.js`: teste automático de uma partida (`npm install socket.io-client` e `node test.js` com o servidor rodando)

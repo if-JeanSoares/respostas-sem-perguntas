@@ -34,10 +34,10 @@ const CAPITALS = [
   ['de Gana', 'Acra', 'Gana'], ['da Romênia', 'Bucareste', 'Romênia'], ['da Bulgária', 'Sófia', 'Bulgária'], ['da Sérvia', 'Belgrado', 'Sérvia'],
 ];
 for (const [de, capital, pais] of CAPITALS) {
-  add([`Qual é a capital ${de}?`, `Qual cidade é a capital ${de}?`, `Como se chama a capital ${de}?`], capital);
+  add([`Entre todas as cidades do mundo, qual delas é a capital ${de}?`, `Qual é o nome da cidade que funciona como capital ${de}?`, `Se você fosse visitar a sede do governo ${de}, para qual cidade iria?`], capital);
   if (pais) {
     const c = capital.split('/')[0];
-    add([`${c} é a capital de qual país?`, `De qual país a cidade de ${c} é a capital?`, `Em qual país fica a capital ${c}?`], pais);
+    add([`A cidade de ${c} é a capital e a sede do governo de qual país?`, `Quem visita ${c} está conhecendo a capital de qual país do mundo?`, `De qual país do mundo a cidade de ${c} é a capital oficial?`], pais);
   }
 }
 
@@ -54,8 +54,8 @@ const STATES = [
 ];
 for (const [de, capital, estado] of STATES) {
   const c = capital.split('/')[0];
-  add([`Qual é a capital do estado ${de}?`, `Qual cidade é a capital ${de}?`, `Como se chama a capital do estado ${de}?`], capital);
-  add([`${c} é a capital de qual estado brasileiro?`, `De qual estado brasileiro ${c} é a capital?`], estado);
+  add([`Entre as cidades brasileiras, qual delas é a capital do estado ${de}?`, `Qual é o nome da cidade que é a capital do estado ${de}?`, `Em qual cidade brasileira fica a sede do governo do estado ${de}?`], capital);
+  add([`A cidade de ${c} é a capital de qual dos estados brasileiros?`, `Quem mora em ${c} vive na capital de qual estado do Brasil?`], estado);
 }
 
 // ---------- Copas do Mundo: [ano, campeã, sede] ----------
@@ -68,8 +68,8 @@ const CUPS = [
   [2006, 'Itália', 'Alemanha'], [2010, 'Espanha', 'África do Sul'], [2014, null, null], [2018, 'França', 'Rússia'], [2022, null, 'Catar/Qatar'],
 ];
 for (const [ano, campea, sede] of CUPS) {
-  if (campea) add([`Qual seleção venceu a Copa do Mundo de ${ano}?`, `Quem foi campeão da Copa do Mundo de ${ano}?`, `A Copa do Mundo de ${ano} foi vencida por qual seleção?`], campea);
-  if (sede) add([`Qual país sediou a Copa do Mundo de ${ano}?`, `Em qual país foi disputada a Copa do Mundo de ${ano}?`, `A Copa do Mundo de ${ano} aconteceu em qual país?`], sede);
+  if (campea) add([`Qual seleção levantou a taça de campeã da Copa do Mundo de ${ano}?`, `Na Copa do Mundo de futebol masculino de ${ano}, qual seleção ficou com o título?`, `Qual país comemorou o título de campeão da Copa do Mundo de ${ano}?`], campea);
+  if (sede) add([`Qual país recebeu os jogos e foi a sede da Copa do Mundo de ${ano}?`, `Em qual país os torcedores assistiram aos jogos da Copa do Mundo de ${ano}?`, `A Copa do Mundo de futebol masculino de ${ano} foi disputada em qual país?`], sede);
 }
 
 // ---------- Elementos químicos: [nome com artigo, símbolo] ----------
@@ -82,8 +82,8 @@ const ELEMENTS = [
 ];
 for (const [de, simbolo] of ELEMENTS) {
   const nome = de.split(' ')[1];
-  add([`Qual é o símbolo químico ${de}?`, `Na tabela periódica, qual é o símbolo ${de}?`], simbolo);
-  add([`Qual elemento químico tem o símbolo ${simbolo}?`, `Na tabela periódica, qual elemento é representado por ${simbolo}?`, `O símbolo ${simbolo} representa qual elemento químico?`], nome[0].toUpperCase() + nome.slice(1));
+  add([`Na tabela periódica dos elementos, qual é o símbolo químico ${de}?`, `Qual é a letra ou sigla usada como símbolo químico ${de}?`], simbolo);
+  add([`Na tabela periódica, qual elemento químico é representado pelo símbolo ${simbolo}?`, `Qual é o nome do elemento químico que tem o símbolo ${simbolo}?`, `Nas aulas de química, o símbolo ${simbolo} representa qual elemento da tabela periódica?`], nome[0].toUpperCase() + nome.slice(1));
 }
 
 // ---------- Moedas ----------
@@ -95,7 +95,8 @@ const CURRENCIES = [
   ['de Israel', 'Shekel/Novo shekel/Siclo'], ['da Tailândia', 'Baht'], ['da Suécia', 'Coroa sueca/Coroa'],
 ];
 for (const [de, moeda] of CURRENCIES) {
-  add([`Qual é a moeda oficial ${de}?`, `Como se chama a moeda ${de}?`, `Qual moeda é usada no dia a dia ${de.startsWith('de ') ? de.replace(/^de /, 'em ') : de.replace(/^d/, 'n')}?`], moeda);
+  const no = de.startsWith('de ') ? de.replace(/^de /, 'em ') : de.replace(/^d/, 'n');
+  add([`Como se chama a moeda oficial que circula no comércio ${de}?`, `Qual é o nome da moeda usada pela população no dia a dia ${no}?`, `Quem viaja a turismo precisa trocar dinheiro por qual moeda oficial ${de}?`], moeda);
 }
 
 // ---------- Jogos eletrônicos: consoles ----------
@@ -105,7 +106,7 @@ const CONSOLES = [
   ['Xbox 360', 'Microsoft'], ['Nintendo 64', null], ['Sega Saturn', null], ['PlayStation 2', 'Sony'], ['Game Gear', 'Sega'], ['Steam Deck', 'Valve'],
 ];
 for (const [consoleName, empresa] of CONSOLES) {
-  if (empresa) add([`Qual empresa fabrica o console ${consoleName}?`, `${consoleName} é um console de qual empresa?`, `Qual empresa lançou o videogame ${consoleName}?`], empresa);
+  if (empresa) add([`Qual empresa é a fabricante responsável pelo console de videogame ${consoleName}?`, `O console de videogame ${consoleName} foi criado e lançado por qual empresa?`, `No mercado de games, qual empresa colocou nas lojas o console ${consoleName}?`], empresa);
 }
 
 // ---------- Jogos eletrônicos: quem criou ----------
@@ -124,7 +125,7 @@ const DEVS = [
   ['Hades', 'Supergiant Games/Supergiant'], ['Baldur\'s Gate 3', 'Larian Studios/Larian'], ['Horizon Zero Dawn', 'Guerrilla Games/Guerrilla'],
 ];
 for (const [jogo, empresa] of DEVS) {
-  add([`Qual empresa criou ${jogo}?`, `Qual estúdio desenvolveu ${jogo}?`, `${jogo} foi desenvolvido por qual empresa?`], empresa);
+  add([`Qual empresa ou estúdio é responsável pelo desenvolvimento do jogo ${jogo}?`, `O jogo eletrônico ${jogo} foi criado e desenvolvido por qual empresa?`, `No mundo dos games, qual estúdio desenvolveu o jogo ${jogo}?`], empresa);
 }
 
 // ---------- Jogos eletrônicos: personagem -> franquia ----------
@@ -151,7 +152,7 @@ const CHARACTERS = [
   ['Vault Boy', 'Fallout'], ['Ori', 'Ori and the Blind Forest/Ori/Ori and the Will of the Wisps'], ['Madeline', 'Celeste'],
 ];
 for (const [personagem, franquia] of CHARACTERS) {
-  add([`${personagem} é personagem de qual franquia de jogos?`, `Em qual franquia de jogos aparece ${personagem}?`, `De qual série de games é ${personagem}?`], franquia);
+  add([`No mundo dos games, ${personagem} é personagem de qual franquia de jogos?`, `Em qual franquia de jogos eletrônicos o jogador encontra ${personagem}?`, `${personagem} ficou famoso como personagem de qual série de jogos eletrônicos?`], franquia);
 }
 
 // ---------- Jogos eletrônicos: Jogo do Ano no The Game Awards ----------
@@ -166,12 +167,23 @@ for (const [ano, jogo] of GOTY) {
   add([`Qual jogo venceu o prêmio de Jogo do Ano no The Game Awards de ${ano}?`, `Qual foi o Jogo do Ano do The Game Awards em ${ano}?`, `No The Game Awards de ${ano}, qual jogo levou o prêmio principal?`], jogo);
 }
 
-// Tira duplicadas (mesma primeira redação) e exporta
-const seen = new Set();
-module.exports = items.filter((it) => {
-  const key = it.texts[0];
-  if (seen.has(key)) return false;
-  seen.add(key);
-  it.key = key;
-  return true;
-});
+// Só entram redações com pelo menos MIN_WORDS palavras, para a pergunta ter o que revelar.
+const MIN_WORDS = 8;
+const countWords = (t) => t.trim().replace(/\s*\?+\s*$/, '').split(/\s+/).length;
+
+function finish(list, minWords) {
+  const seen = new Set();
+  return list
+    .map((it) => ({ texts: it.texts.filter((t) => countWords(t) >= minWords), answer: it.answer }))
+    .filter((it) => {
+      if (!it.texts.length || seen.has(it.texts[0])) return false;
+      seen.add(it.texts[0]);
+      it.key = it.texts[0];
+      return true;
+    });
+}
+
+// Perguntas finais: as mais longas, usadas para fechar a partida.
+const FINALS = finish(require('./finals.js').map(([text, answer]) => ({ texts: [text], answer })), MIN_WORDS);
+
+module.exports = { BANK: finish(items, MIN_WORDS), FINALS };
