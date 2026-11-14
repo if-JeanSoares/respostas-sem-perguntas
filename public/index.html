@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Respostas sem Perguntas</title>
+<style>
+  :root {
+    --bg: #14121f; --card: #1f1c30; --card2: #2a2640; --line: #3a3558;
+    --text: #f3f1ff; --muted: #a9a3c9; --accent: #ffcc33; --accent2: #7c5cff;
+    --ok: #2fd27a; --bad: #ff5c6c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 28px; margin: 8px 0 4px; letter-spacing: .5px; }
+  h1 span { color: var(--accent); }
+  h2 { font-size: 18px; margin: 0 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+  input, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card2); color: var(--text); font-size: 16px; }
+  input:focus, textarea:focus { outline: 2px solid var(--accent2); border-color: transparent; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 6px; }
+  button { cursor: pointer; border: 0; border-radius: 10px; padding: 12px 18px; font-size: 15px; font-weight: 600; background: var(--accent2); color: white; }
+  button:hover { filter: brightness(1.1); }
+  button:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+  button.yellow { background: var(--accent); color: #241d00; }
+  button.ok { background: var(--ok); color: #002611; }
+  button.bad { background: var(--bad); }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+  button.small { padding: 6px 10px; font-size: 13px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .grid { display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .code { font-family: ui-monospace, monospace; background: var(--card2); border: 1px dashed var(--accent); color: var(--accent); padding: 6px 12px; border-radius: 8px; font-size: 18px; letter-spacing: 3px; }
+  .players { list-style: none; padding: 0; margin: 0; }
+  .players li { display: flex; justify-content: space-between; padding: 9px 10px; border-radius: 8px; margin-bottom: 4px; background: var(--card2); }
+  .players li.turn { outline: 2px solid var(--accent); }
+  .players li.off { opacity: .45; }
+  .players .pts { font-weight: 700; color: var(--accent); }
+  .tag { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: var(--line); color: var(--muted); margin-left: 6px; }
+  .question { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; justify-content: center; padding: 18px 4px; }
+  .w { display: flex; align-items: flex-end; }
+  .blank { min-width: 70px; height: 62px; border-radius: 10px; background: var(--card2); border: 2px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 10px; font-size: 20px; font-weight: 700; position: relative; }
+  .blank .n { position: absolute; top: 3px; left: 6px; font-size: 11px; color: var(--muted); font-weight: 600; }
+  .blank.hidden { color: transparent; }
+  .blank.clickable { cursor: pointer; border-color: var(--accent); background: #332d10; }
+  .blank.clickable:hover { transform: translateY(-2px); }
+  .blank.shown { border-color: var(--accent2); background: #2d2458; }
+  .blank.ghost { color: var(--muted); font-weight: 500; font-style: italic; }
+  .punct { font-size: 26px; font-weight: 800; padding: 0 2px 6px; color: var(--accent); }
+  .qmark { font-size: 40px; font-weight: 800; color: var(--accent); padding-bottom: 4px; }
+  .value { text-align: center; }
+  .value b { font-size: 42px; color: var(--accent); display: block; line-height: 1; }
+  .value small { color: var(--muted); }
+  .status { text-align: center; font-size: 18px; margin: 6px 0 14px; }
+  .status b { color: var(--accent); }
+  .guessbox { display: flex; gap: 10px; }
+  .guessbox input { flex: 1; }
+  .judge { text-align: center; background: var(--card2); border-radius: 12px; padding: 16px; }
+  .judge .g { font-size: 24px; font-weight: 700; margin: 8px 0 14px; }
+  .log { list-style: none; padding: 0; margin: 0; max-height: 260px; overflow: auto; }
+  .log li { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .log .c { color: var(--ok); } .log .x { color: var(--bad); }
+  .reveal { text-align: center; padding: 10px; }
+  .reveal .full { font-size: 22px; margin: 10px 0; }
+  .reveal .ans { font-size: 28px; font-weight: 800; color: var(--ok); }
+  .myq { list-style: none; padding: 0; margin: 10px 0 0; }
+  .myq li { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 10px; background: var(--card2); border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
+  .myq li em { color: var(--ok); font-style: normal; }
+  .err { color: var(--bad); min-height: 20px; margin-top: 8px; font-size: 14px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .podium li:first-child { background: #3a3110; }
+  .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const $app = document.getElementById('app');
+let S = null;          // estado vindo do servidor
+let session = load();  // { code, name, playerId }
+let joinError = '';
+
+function load() { try { return JSON.parse(localStorage.getItem('rsp') || 'null'); } catch { return null; } }
+function save(v) { try { v ? localStorage.setItem('rsp', JSON.stringify(v)) : localStorage.removeItem('rsp'); } catch {} }
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+socket.on('connect', () => { if (session && session.playerId) join(session.code, session.name, session.playerId); else render(); });
+socket.on('state', (st) => { S = st; render(); });
+
+function join(code, name, playerId) {
+  socket.emit('join', { code, name, playerId }, (res) => {
+    if (!res.ok) {
+      if (playerId) { session = { code, name }; save(session); return join(code, name); }
+      joinError = res.error; S = null; render(); return;
+    }
+    session = { code: res.code, name: res.name, playerId: res.playerId };
+    save(session);
+    history.replaceState(null, '', '?sala=' + res.code);
+  });
+}
+
+function leave() { socket.emit('leave'); session = null; save(null); S = null; history.replaceState(null, '', location.pathname); render(); }
+
+// ---------- Telas ----------
+function render() {
+  // Preserva o que está sendo digitado entre re-renderizações
+  const keep = {};
+  document.querySelectorAll('input[data-keep],textarea[data-keep]').forEach((el) => (keep[el.dataset.keep] = el.value));
+  const focused = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.keep : null;
+
+  if (!S) $app.innerHTML = homeView();
+  else if (S.phase === 'lobby') $app.innerHTML = lobbyView();
+  else if (S.phase === 'gameOver') $app.innerHTML = gameOverView();
+  else $app.innerHTML = gameView();
+
+  for (const [k, v] of Object.entries(keep)) { const el = document.querySelector(`[data-keep="${k}"]`); if (el) el.value = v; }
+  if (focused) { const el = document.querySelector(`[data-keep="${focused}"]`); if (el) { el.focus(); const n = el.value.length; try { el.setSelectionRange(n, n); } catch {} } }
+  else { const auto = document.querySelector('[data-autofocus]'); if (auto) auto.focus(); }
+}
+
+function homeView() {
+  const params = new URLSearchParams(location.search);
+  const code = params.get('sala') || (session && session.code) || '';
+  return `
+    <h1>Respostas <span>sem Perguntas</span></h1>
+    <p class="sub">A pergunta está escondida. Revele uma palavra por vez e tente adivinhar a resposta.</p>
+    <div class="card" style="max-width:460px">
+      <h2>Entrar na sala</h2>
+      <form onsubmit="event.preventDefault(); joinError=''; join(this.code.value, this.name.value)">
+        <label>Seu nome</label>
+        <input name="name" data-keep="name" maxlength="20" placeholder="Ex.: Luisinho" value="${esc(session && session.name || '')}" ${code ? 'data-autofocus' : ''} required />
+        <label>Código da sala</label>
+        <input name="code" data-keep="code" maxlength="12" placeholder="Ex.: RODA" value="${esc(code)}" style="text-transform:uppercase" required />
+        <p class="hint">Se a sala não existir, ela é criada. Passe o mesmo código para os amigos.</p>
+        <div class="err">${esc(joinError)}</div>
+        <button class="yellow" style="width:100%">Entrar</button>
+      </form>
+    </div>
+    <div class="card" style="max-width:460px">
+      <h2>Como jogar</h2>
+      <ol class="muted" style="padding-left:18px;line-height:1.6;margin:0">
+        <li>No lobby, cada um cadastra perguntas com a resposta.</li>
+        <li>Na partida, só aparece quantas palavras a pergunta tem.</li>
+        <li>Na sua vez: escolha uma palavra para revelar e dê um chute.</li>
+        <li>Acertou? Leva os pontos e a pergunta acaba. Errou? Passa a vez.</li>
+        <li>A pergunta vale o nº de palavras e cai 1 ponto a cada nova palavra revelada.</li>
+        <li>Quem escreveu a pergunta não joga nela: é o juiz dos chutes.</li>
+      </ol>
+    </div>`;
+}
+
+function topBar() {
+  return `
+    <div class="top">
+      <h1 style="font-size:22px;margin:0">Respostas <span>sem Perguntas</span></h1>
+      <div class="row">
+        <span class="muted">Sala</span> <span class="code">${esc(S.code)}</span>
+        <button class="ghost small" onclick="copyLink()">Copiar link</button>
+        <button class="ghost small" onclick="if(confirmLeave())leave()">Sair</button>
+      </div>
+    </div>`;
+}
+function confirmLeave() { return S.phase === 'lobby' || window.confirm('Sair da partida?'); }
+function copyLink() {
+  const url = location.origin + location.pathname + '?sala=' + S.code;
+  navigator.clipboard?.writeText(url).then(() => flash('Link copiado!'), () => window.prompt('Copie o link:', url));
+}
+function flash(msg) {
+  const d = document.createElement('div');
+  d.textContent = msg;
+  d.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2fd27a;color:#002611;padding:10px 16px;border-radius:10px;font-weight:700;z-index:9';
+  document.body.appendChild(d); setTimeout(() => d.remove(), 1600);
+}
+
+function playersList(showTurn) {
+  const sorted = showTurn ? S.players : [...S.players].sort((a, b) => b.score - a.score);
+  return `<ul class="players">${sorted.map((p) => `
+    <li class="${showTurn && p.id === S.turnId ? 'turn' : ''} ${p.connected ? '' : 'off'}">
+      <span>${esc(p.name)}${p.id === S.me ? '<span class="tag">você</span>' : ''}${showTurn && p.id === S.authorId ? '<span class="tag">juiz</span>' : ''}${p.connected ? '' : '<span class="tag">offline</span>'}</span>
+      <span class="pts">${p.score}</span>
+    </li>`).join('')}</ul>`;
+}
+
+function lobbyView() {
+  const mine = S.myQuestions;
+  const others = S.questionsByPlayer.filter((x) => x.count > 0);
+  return `${topBar()}
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Cadastre suas perguntas</h2>
+        <form onsubmit="event.preventDefault(); addQuestion(this)">
+          <label>Pergunta</label>
+          <input name="text" data-keep="qtext" maxlength="300" placeholder="Ex.: Anjo das pernas tortas é o apelido de qual jogador?" />
+          <label>Resposta</label>
+          <input name="answer" data-keep="qans" maxlength="120" placeholder="Ex.: Garrincha / Mané Garrincha" />
+          <p class="hint">Dica: separe respostas aceitas com "/". Resposta idêntica é aceita automaticamente; nas outras, você julga.</p>
+          <div class="err" id="qerr"></div>
+          <button>Adicionar pergunta</button>
+        </form>
+        ${mine.length ? `<ul class="myq">${mine.map((q) => `
+          <li><span>${esc(q.text)} → <em>${esc(q.answer)}</em></span>
+          <button class="ghost small" onclick="socket.emit('question:remove',{id:'${q.id}'})">remover</button></li>`).join('')}</ul>` : '<p class="muted">Você ainda não cadastrou perguntas.</p>'}
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Jogadores (${S.players.length})</h2>
+        ${playersList(false)}
+      </div>
+      <div class="card">
+        <h2>Perguntas: ${S.questionCount}</h2>
+        ${others.length ? `<p class="muted">${others.map((o) => `${esc(o.name)}: ${o.count}`).join(' · ')}</p>` : ''}
+        ${S.sampleCount ? `<p class="muted">Exemplos: ${S.sampleCount} <button class="ghost small" onclick="socket.emit('question:clearSamples')">tirar</button></p>`
+          : `<button class="ghost small" onclick="socket.emit('question:samples')">+ Adicionar perguntas de exemplo</button>`}
+        <div class="err" id="serr"></div>
+        <button class="yellow" style="width:100%;margin-top:8px" ${S.questionCount ? '' : 'disabled'} onclick="startGame()">Começar partida</button>
+        <p class="hint">Qualquer jogador pode começar. As perguntas são embaralhadas.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addQuestion(form) {
+  socket.emit('question:add', { text: form.text.value, answer: form.answer.value }, (res) => {
+    if (!res.ok) { document.getElementById('qerr').textContent = res.error; return; }
+    form.text.value = ''; form.answer.value = '';
+    document.querySelectorAll('[data-keep="qtext"],[data-keep="qans"]').forEach((el) => (el.value = ''));
+    document.querySelector('[data-keep="qtext"]')?.focus();
+  });
+}
+function startGame() {
+  socket.emit('game:start', null, (res) => { if (res && !res.ok) document.getElementById('serr').textContent = res.error; });
+}
+
+function gameView() {
+  const myTurn = S.turnId === S.me;
+  const canReveal = myTurn && S.phase === 'reveal';
+  const end = S.phase === 'roundEnd';
+
+  const blanks = S.blanks.map((b) => {
+    let cls = 'blank', inner = '';
+    if (b.word !== null && (b.revealed || end)) { cls += ' shown'; inner = esc(b.word); }
+    else if (b.word !== null) { cls += ' ghost'; inner = esc(b.word); }   // o juiz vê a pergunta toda
+    else { cls += ' hidden'; inner = '·'; }
+    if (canReveal && !b.revealed) cls += ' clickable';
+    const click = canReveal && !b.revealed ? `onclick="socket.emit('reveal',{i:${b.i}})"` : '';
+    return `<span class="w"><span class="${cls}" ${click}><span class="n">${b.i + 1}</span>${inner}</span>${b.punct ? `<span class="punct">${esc(b.punct)}</span>` : ''}</span>`;
+  }).join('') + '<span class="qmark">?</span>';
+
+  let action = '';
+  if (end) {
+    action = `<div class="reveal">
+      ${S.winner ? `<div class="status">🎉 <b>${esc(S.winner.name)}</b> acertou e ganhou <b>${S.winner.value}</b> pontos!</div>` : '<div class="status">Ninguém acertou essa.</div>'}
+      <div class="full">${esc(S.fullQuestion.replace(/\s*\?+\s*$/, ''))}?</div>
+      <div class="ans">${esc(S.answer)}</div>
+      ${S.authorName ? `<p class="muted">Pergunta de ${esc(S.authorName)}</p>` : ''}
+      <div class="row" style="justify-content:center;margin-top:14px">
+        <button class="yellow" data-autofocus onclick="socket.emit('next')">${S.qNumber >= S.qTotal ? 'Ver resultado final' : 'Próxima pergunta →'}</button>
+      </div></div>`;
+  } else if (S.phase === 'reveal') {
+    action = myTurn
+      ? `<div class="status">Sua vez! <b>Clique numa palavra</b> para revelar.</div>`
+      : `<div class="status">Vez de <b>${esc(S.turnName)}</b> escolher uma palavra…</div>`;
+  } else if (S.phase === 'guess') {
+    action = myTurn
+      ? `<div class="status">${S.allRevealed ? 'Todas as palavras reveladas. ' : ''}Agora <b>dê seu chute</b>, valendo ${S.value}!</div>
+         <form class="guessbox" onsubmit="event.preventDefault(); if(this.g.value.trim()) socket.emit('guess',{text:this.g.value})">
+           <input name="g" data-keep="guess" data-autofocus maxlength="120" placeholder="Sua resposta" autocomplete="off" />
+           <button class="yellow">Chutar</button>
+         </form>
+         <div class="row" style="justify-content:center;margin-top:10px"><button class="ghost small" onclick="socket.emit('skipTurn')">Passar sem chutar</button></div>`
+      : `<div class="status"><b>${esc(S.turnName)}</b> está pensando no chute…</div>`;
+  } else if (S.phase === 'judging') {
+    action = `<div class="judge">
+      <div class="muted">${esc(S.turnName)} chutou:</div>
+      <div class="g">"${esc(S.lastGuess)}"</div>
+      ${S.canJudge
+        ? `<div class="muted" style="margin-bottom:10px">Resposta: <b style="color:var(--ok)">${esc(S.answer || '')}</b></div>
+           <div class="row" style="justify-content:center"><button class="ok" onclick="socket.emit('judge',{correct:true})">✅ Vale!</button>
+           <button class="bad" onclick="socket.emit('judge',{correct:false})">❌ Errou</button></div>`
+        : `<div class="muted">${S.authorName ? `Esperando ${esc(S.authorName)} julgar…` : 'Esperando alguém julgar…'}</div>`}
+    </div>`;
+    // Sem autor (pergunta de exemplo): os outros jogadores veem a resposta para julgar
+  }
+
+  const authorNote = S.isAuthor && !end ? `<p class="hint" style="text-align:center">Essa pergunta é sua: você não joga nela e julga os chutes. As palavras em itálico ainda estão escondidas para os outros.</p>` : '';
+
+  const log = S.log.length ? `<ul class="log">${[...S.log].reverse().map((l) =>
+    `<li><b>${esc(l.name)}</b>: ${esc(l.guess)} <span class="${l.correct ? 'c' : 'x'}">${l.correct ? '✔ +' + l.value : '✘'}</span></li>`).join('')}</ul>` : '<p class="muted">Nenhum chute ainda.</p>';
+
+  return `${topBar()}
+  <div class="grid">
+    <div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <span class="muted">Pergunta ${S.qNumber} de ${S.qTotal} · ${S.wordCount} palavras${S.authorName ? ` · de ${esc(S.authorName)}` : ''}</span>
+          <div class="value"><b>${S.value}</b><small>pontos</small></div>
+        </div>
+        <div class="question">${blanks}</div>
+        ${authorNote}
+        ${action}
+      </div>
+      ${!end ? `<div class="row" style="justify-content:flex-end">
+        ${S.phase !== 'judging' ? `<button class="ghost small" onclick="if(confirm('Pular a vez de ${esc(S.turnName).replace(/'/g, '')}?'))socket.emit('skipTurn')">Pular vez de ${esc(S.turnName)}</button>` : ''}
+        <button class="ghost small" onclick="if(confirm('Desistir da pergunta e mostrar a resposta?'))socket.emit('giveUp')">Desistir da pergunta</button>
+      </div>` : ''}
+    </div>
+    <div>
+      <div class="card"><h2>Placar</h2>${playersList(true)}</div>
+      <div class="card"><h2>Chutes</h2>${log}</div>
+    </div>
+  </div>`;
+}
+
+function gameOverView() {
+  const ranking = [...S.players].sort((a, b) => b.score - a.score);
+  const medals = ['🥇', '🥈', '🥉'];
+  return `${topBar()}
+  <div class="card" style="max-width:520px;margin:20px auto;text-align:center">
+    <h2 style="font-size:26px">Fim de jogo!</h2>
+    <p class="status">🏆 <b>${esc(ranking[0]?.name || '')}</b> venceu com <b>${ranking[0]?.score || 0}</b> pontos</p>
+    <ul class="players podium" style="text-align:left">${ranking.map((p, i) =>
+      `<li><span>${medals[i] || (i + 1) + 'º'} ${esc(p.name)}</span><span class="pts">${p.score}</span></li>`).join('')}</ul>
+    <button class="yellow" style="margin-top:16px" onclick="socket.emit('backToLobby')">Voltar ao lobby</button>
+  </div>`;
+}
+
+render();
+</script>
+</body>
+</html>
