@@ -22,7 +22,7 @@ Para testar sozinho, abra duas ou três abas anônimas, cada uma com um nome.
 
 ## Regras
 
-1. No lobby, cada jogador cadastra perguntas com a resposta. Use "/" para aceitar mais de uma resposta (ex.: `Garrincha/Mané Garrincha`).
+1. A partida sorteia 10 perguntas (dá para mudar no lobby) entre o banco pronto e as que os jogadores cadastrarem. No lobby, cada jogador pode cadastrar perguntas com a resposta. Use "/" para aceitar mais de uma resposta (ex.: `Garrincha/Mané Garrincha`).
 2. Na partida só aparece quantas palavras a pergunta tem.
 3. Na sua vez, clique numa palavra para revelar e dê um chute.
 4. Acertou: leva os pontos e a pergunta acaba. Errou: passa a vez.
@@ -32,5 +32,6 @@ Para testar sozinho, abra duas ou três abas anônimas, cada uma com um nome.
 ## Arquivos
 
 - `server.js`: servidor e regras do jogo (Express + Socket.IO)
+- `questions.js`: o banco de perguntas (adicione linhas para aumentar)
 - `public/index.html`: a tela do jogo
 - `test.js`: teste automático de uma partida (`npm install socket.io-client` e `node test.js` com o servidor rodando)

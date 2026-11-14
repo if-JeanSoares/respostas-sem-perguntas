@@ -21,6 +21,8 @@ const assert = (c, m) => { if (!c) { console.error('FALHOU:', m); process.exit(1
   assert(!(await emit(b, 'question:add', { text: '', answer: 'x' })).ok, 'pergunta vazia é barrada');
   await sleep(100);
   assert(b.st.questionCount === 1 && b.st.myQuestions.length === 0, 'Beto vê a contagem mas não a pergunta da Ana');
+  b.emit('settings', { useBank: false }); await sleep(100);
+  assert(b.st.poolCount === 1 && b.st.bankSize > 100, 'banco desligado: só a pergunta da Ana');
   assert((await emit(b, 'game:start')).ok, 'partida começou');
   await sleep(100);
   assert(b.st.wordCount === 11 && b.st.value === 11, '11 palavras, vale 11');
@@ -42,6 +44,13 @@ const assert = (c, m) => { if (!c) { console.error('FALHOU:', m); process.exit(1
   assert(b.st.answer && b.st.fullQuestion, 'resposta revelada no fim');
   b.emit('next'); await sleep(100);
   assert(b.st.phase === 'gameOver' && b.st.players.find((p) => p.name === 'Caio').score === 10, 'fim de jogo com placar certo');
+  // Banco: sorteia 10, sem repetir, e muda a cada partida
+  const d = client('Duda'); await sleep(200);
+  await emit(d, 'join', { code: 'banco', name: 'Duda' }); await sleep(100);
+  assert(d.st.useBank && d.st.limit === 10, 'sala nova: banco ligado, limite 10');
+  await emit(d, 'game:start'); await sleep(100);
+  assert(d.st.qTotal === 10, 'partida com 10 perguntas sorteadas');
+  d.emit('settings', { limit: 5 });
   console.log('\nTudo certo!');
   process.exit(0);
 })();

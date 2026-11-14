@@ -17,25 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 const rooms = new Map();
 const newId = () => crypto.randomBytes(8).toString('hex');
 
-// Perguntas de exemplo (sem autor): a resposta é conferida automaticamente.
-// Use "/" para aceitar respostas alternativas.
-const SAMPLE_QUESTIONS = [
-  ['Qual é o maior planeta do Sistema Solar?', 'Júpiter'],
-  ['Em que país fica a cidade histórica de Machu Picchu?', 'Peru'],
-  ['Qual seleção venceu a Copa do Mundo de 2002?', 'Brasil'],
-  ['Quantos lados tem um hexágono?', '6/seis'],
-  ['Quem pintou o quadro Mona Lisa, exposto no Museu do Louvre?', 'Leonardo da Vinci/Da Vinci/Leonardo'],
-  ['Qual elemento químico é representado pelo símbolo O?', 'Oxigênio'],
-  ['Em que ano o homem pisou na Lua pela primeira vez?', '1969'],
-  ['Qual é a capital da Austrália, que muita gente confunde com Sydney?', 'Camberra/Canberra'],
-  ['Qual animal é chamado de rei da selva, mesmo vivendo na savana?', 'Leão'],
-  ['Qual time brasileiro é conhecido pelo apelido de Peixe?', 'Santos'],
-  ['Quantos jogadores cada time tem em campo numa partida de futebol?', '11/onze'],
-  ['Qual instrumento musical tem teclas brancas e pretas e cordas por dentro?', 'Piano'],
-  ['Qual é o maior oceano do planeta Terra?', 'Pacífico/Oceano Pacífico'],
-  ['Qual país é famoso pela Torre Eiffel, em sua capital?', 'França'],
-  ['Quantos minutos dura, no tempo normal, uma partida de futebol?', '90/noventa'],
-];
+// Banco de perguntas pronto (sem autor): a resposta é conferida automaticamente.
+const BANK = require('./questions.js');
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 50;
 
 // Separa a pergunta em palavras. Pontuação no fim da palavra (vírgula, ponto...) fica visível.
 function tokenize(text) {
@@ -116,7 +101,10 @@ function stateFor(room, viewerId) {
       name: p.name,
       count: room.questions.filter((q) => q.authorId === p.id).length,
     })),
-    sampleCount: room.questions.filter((q) => !q.authorId).length,
+    bankSize: BANK.length,
+    useBank: room.useBank,
+    limit: room.limit,
+    poolCount: room.questions.length + (room.useBank ? BANK.length : 0),
     myQuestions: myQuestions.map((q) => ({ id: q.id, text: q.text, answer: q.answer })),
     qNumber: room.qIndex + 1,
     qTotal: room.order.length,
@@ -213,7 +201,7 @@ io.on('connection', (socket) => {
 
     let room = rooms.get(code);
     if (!room) {
-      room = { code, players: [], questions: [], order: [], qIndex: -1, starter: 0, round: null, phase: 'lobby' };
+      room = { code, players: [], questions: [], order: [], qIndex: -1, starter: 0, round: null, phase: 'lobby', useBank: true, limit: DEFAULT_LIMIT };
       rooms.set(code, room);
     }
 
@@ -273,28 +261,25 @@ io.on('connection', (socket) => {
     broadcast(room);
   });
 
-  socket.on('question:samples', () => {
+  socket.on('settings', ({ useBank, limit } = {}) => {
     const room = getRoom();
-    if (!room || room.questions.some((q) => !q.authorId)) return;
-    for (const [text, answer] of SAMPLE_QUESTIONS) {
-      room.questions.push({ id: newId(), text, answer, authorId: null, authorName: null });
-    }
-    broadcast(room);
-  });
-
-  socket.on('question:clearSamples', () => {
-    const room = getRoom();
-    if (!room) return;
-    room.questions = room.questions.filter((q) => q.authorId);
+    if (!room || !me() || room.phase !== 'lobby') return;
+    if (typeof useBank === 'boolean') room.useBank = useBank;
+    limit = Number(limit);
+    if (Number.isInteger(limit)) room.limit = Math.min(MAX_LIMIT, Math.max(1, limit));
     broadcast(room);
   });
 
   socket.on('game:start', (_, ack) => {
     const room = getRoom();
     if (!room || room.phase !== 'lobby') return;
-    if (!room.questions.length) return ack && ack({ ok: false, error: 'Cadastrem pelo menos uma pergunta.' });
+    const bank = room.useBank
+      ? BANK.map(([text, answer]) => ({ text, answer, authorId: null, authorName: null }))
+      : [];
+    const pool = room.questions.concat(bank);
+    if (!pool.length) return ack && ack({ ok: false, error: 'Cadastrem uma pergunta ou liguem o banco de perguntas.' });
     room.players.forEach((p) => (p.score = 0));
-    room.order = shuffle(room.questions);
+    room.order = shuffle(pool).slice(0, room.limit); // sorteia as perguntas da partida
     room.qIndex = 0;
     room.starter = 0;
     startQuestion(room);
@@ -329,7 +314,7 @@ io.on('connection', (socket) => {
       resolveGuess(room, true); // resposta idêntica: acerto automático
     } else {
       room.phase = 'judging';
-      // Sem ninguém para julgar (ex.: jogando sozinho com perguntas de exemplo): conta como erro
+      // Sem ninguém para julgar (pergunta do banco, sem autor): conta como erro
       if (!room.players.some((x) => canJudge(room, x.id))) resolveGuess(room, false);
     }
     broadcast(room);

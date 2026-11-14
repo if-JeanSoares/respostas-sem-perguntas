@@ -72,6 +72,9 @@
   .err { color: var(--bad); min-height: 20px; margin-top: 8px; font-size: 14px; }
   .muted { color: var(--muted); font-size: 14px; }
   .podium li:first-child { background: #3a3110; }
+  select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card2); color: var(--text); font-size: 16px; }
+  label.check { display: flex; gap: 8px; align-items: center; color: var(--text); font-size: 15px; margin: 12px 0 4px; cursor: pointer; }
+  label.check input { width: 18px; height: 18px; }
   .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
 </style>
 </head>
@@ -145,7 +148,7 @@ function homeView() {
     <div class="card" style="max-width:460px">
       <h2>Como jogar</h2>
       <ol class="muted" style="padding-left:18px;line-height:1.6;margin:0">
-        <li>No lobby, cada um cadastra perguntas com a resposta.</li>
+        <li>No lobby, cada um pode cadastrar perguntas. Também há um banco pronto, e a partida sorteia 10.</li>
         <li>Na partida, só aparece quantas palavras a pergunta tem.</li>
         <li>Na sua vez: escolha uma palavra para revelar e dê um chute.</li>
         <li>Acertou? Leva os pontos e a pergunta acaba. Errou? Passa a vez.</li>
@@ -215,13 +218,20 @@ function lobbyView() {
         ${playersList(false)}
       </div>
       <div class="card">
-        <h2>Perguntas: ${S.questionCount}</h2>
-        ${others.length ? `<p class="muted">${others.map((o) => `${esc(o.name)}: ${o.count}`).join(' · ')}</p>` : ''}
-        ${S.sampleCount ? `<p class="muted">Exemplos: ${S.sampleCount} <button class="ghost small" onclick="socket.emit('question:clearSamples')">tirar</button></p>`
-          : `<button class="ghost small" onclick="socket.emit('question:samples')">+ Adicionar perguntas de exemplo</button>`}
+        <h2>Partida</h2>
+        <p class="muted">Perguntas dos jogadores: <b>${S.questionCount}</b>${others.length ? ' (' + others.map((o) => `${esc(o.name)}: ${o.count}`).join(' · ') + ')' : ''}</p>
+        <label class="check"><input type="checkbox" ${S.useBank ? 'checked' : ''} onchange="socket.emit('settings',{useBank:this.checked})" />
+          Incluir o banco de perguntas (${S.bankSize})</label>
+        <label>Perguntas por partida</label>
+        <select onchange="socket.emit('settings',{limit:Number(this.value)})">
+          ${[5, 10, 15, 20, 30, 50].map((n) => `<option value="${n}" ${S.limit === n ? 'selected' : ''}>${n}</option>`).join('')}
+        </select>
+        <p class="hint">${S.poolCount
+          ? `Serão sorteadas <b>${Math.min(S.limit, S.poolCount)}</b> de ${S.poolCount} perguntas disponíveis.`
+          : 'Nenhuma pergunta disponível: cadastre uma ou ligue o banco.'}</p>
         <div class="err" id="serr"></div>
-        <button class="yellow" style="width:100%;margin-top:8px" ${S.questionCount ? '' : 'disabled'} onclick="startGame()">Começar partida</button>
-        <p class="hint">Qualquer jogador pode começar. As perguntas são embaralhadas.</p>
+        <button class="yellow" style="width:100%;margin-top:8px" ${S.poolCount ? '' : 'disabled'} onclick="startGame()">Começar partida</button>
+        <p class="hint">Qualquer jogador pode mudar as opções e começar. Nas perguntas do banco vale só a resposta exata (sem contar acento e maiúscula).</p>
       </div>
     </div>
   </div>`;
