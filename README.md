@@ -27,11 +27,13 @@ Para testar sozinho, abra duas ou três abas anônimas, cada uma com um nome.
 3. Na sua vez, clique numa palavra para revelar e dê um chute.
 4. Acertou: leva os pontos e a pergunta acaba. Errou: passa a vez.
 5. A pergunta vale o número de palavras e perde 1 ponto a cada nova palavra revelada.
-6. Quem escreveu a pergunta não joga nela e julga os chutes que não batem exatamente com a resposta.
+6. A última pergunta da partida é sempre a mais longa, então é a que vale mais.
+7. Quem escreveu a pergunta não joga nela e julga os chutes que não batem exatamente com a resposta.
 
 ## Arquivos
 
 - `server.js`: servidor e regras do jogo (Express + Socket.IO)
-- `questions.js`: o banco de perguntas (adicione linhas para aumentar)
+- `questions.js`: perguntas escritas à mão (adicione linhas para aumentar)
+- `bank.js`: monta o banco completo, gerando perguntas a partir de tabelas (capitais, Copas, elementos, jogos...)
 - `public/index.html`: a tela do jogo
 - `test.js`: teste automático de uma partida (`npm install socket.io-client` e `node test.js` com o servidor rodando)

@@ -154,6 +154,7 @@ function homeView() {
         <li>Acertou? Leva os pontos e a pergunta acaba. Errou? Passa a vez.</li>
         <li>A pergunta vale o nº de palavras e cai 1 ponto a cada nova palavra revelada.</li>
         <li>Quem escreveu a pergunta não joga nela: é o juiz dos chutes.</li>
+        <li>A última pergunta é sempre a mais longa da partida, então é a que vale mais.</li>
       </ol>
     </div>`;
 }
@@ -310,7 +311,7 @@ function gameView() {
     <div>
       <div class="card">
         <div class="row" style="justify-content:space-between">
-          <span class="muted">Pergunta ${S.qNumber} de ${S.qTotal} · ${S.wordCount} palavras${S.authorName ? ` · de ${esc(S.authorName)}` : ''}</span>
+          <span class="muted">${S.isLast ? '<b style="color:var(--accent)">🔥 Pergunta final, a que vale mais!</b> · ' : ''}Pergunta ${S.qNumber} de ${S.qTotal} · ${S.wordCount} palavras${S.authorName ? ` · de ${esc(S.authorName)}` : ''}</span>
           <div class="value"><b>${S.value}</b><small>pontos</small></div>
         </div>
         <div class="question">${blanks}</div>

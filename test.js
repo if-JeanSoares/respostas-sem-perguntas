@@ -50,6 +50,13 @@ const assert = (c, m) => { if (!c) { console.error('FALHOU:', m); process.exit(1
   assert(d.st.useBank && d.st.limit === 10, 'sala nova: banco ligado, limite 10');
   await emit(d, 'game:start'); await sleep(100);
   assert(d.st.qTotal === 10, 'partida com 10 perguntas sorteadas');
+  // A última pergunta é a mais longa
+  const lens = [];
+  while (d.st.phase !== 'gameOver') {
+    if (d.st.phase !== 'roundEnd') { lens.push(d.st.wordCount); d.emit('giveUp'); await sleep(15); }
+    if (d.st.phase === 'roundEnd') { d.emit('next'); await sleep(15); }
+  }
+  assert(lens.length === 10 && lens[9] === Math.max(...lens), 'última pergunta é a mais longa: ' + lens.join(','));
   // Sem repetição entre partidas da mesma sala
   const e = client('Edu'); await sleep(200);
   await emit(e, 'join', { code: 'repete', name: 'Edu' });
@@ -63,8 +70,8 @@ const assert = (c, m) => { if (!c) { console.error('FALHOU:', m); process.exit(1
     }
     e.emit('backToLobby'); await sleep(50);
     if (m === 1) assert(new Set(seen).size === 100 && e.st.freshCount === e.st.bankSize - 100, '2 partidas de 50: 100 perguntas diferentes');
+    if (m === 2) assert(new Set(seen).size === 150, '3 partidas de 50: 150 perguntas diferentes');
   }
-  assert(new Set(seen.slice(100)).size === 50 && new Set(seen).size === e.st.bankSize, '3ª partida usa as 40 inéditas antes de repetir');
   console.log('\nTudo certo!');
   process.exit(0);
 })();

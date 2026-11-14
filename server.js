@@ -18,7 +18,7 @@ const rooms = new Map();
 const newId = () => crypto.randomBytes(8).toString('hex');
 
 // Banco de perguntas pronto (sem autor): a resposta é conferida automaticamente.
-const BANK = require('./questions.js');
+const BANK = require('./bank.js'); // itens { key, texts: [redações], answer }
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
 
@@ -107,10 +107,11 @@ function stateFor(room, viewerId) {
     poolCount: room.questions.length + (room.useBank ? BANK.length : 0),
     freshCount:
       room.questions.filter((q) => !room.used.has(q.text)).length +
-      (room.useBank ? BANK.filter(([text]) => !room.used.has(text)).length : 0),
+      (room.useBank ? BANK.filter((q) => !room.used.has(q.key)).length : 0),
     myQuestions: myQuestions.map((q) => ({ id: q.id, text: q.text, answer: q.answer })),
     qNumber: room.qIndex + 1,
     qTotal: room.order.length,
+    isLast: room.order.length > 1 && room.qIndex === room.order.length - 1,
     authorId: r ? r.authorId : null,
     authorName: r ? r.authorName : null,
     isAuthor: !!isAuthor,
@@ -204,7 +205,7 @@ io.on('connection', (socket) => {
 
     let room = rooms.get(code);
     if (!room) {
-      room = { code, players: [], questions: [], order: [], qIndex: -1, starter: 0, round: null, phase: 'lobby', useBank: true, limit: DEFAULT_LIMIT, used: new Set() };
+      room = { code, players: [], questions: [], order: [], qIndex: -1, starter: 0, round: null, phase: 'lobby', useBank: true, limit: DEFAULT_LIMIT, used: new Set(), usedTexts: new Set() };
       rooms.set(code, room);
     }
 
@@ -276,14 +277,11 @@ io.on('connection', (socket) => {
   socket.on('game:start', (_, ack) => {
     const room = getRoom();
     if (!room || room.phase !== 'lobby') return;
-    const bank = room.useBank
-      ? BANK.map(([text, answer]) => ({ text, answer, authorId: null, authorName: null }))
-      : [];
-    const pool = room.questions.concat(bank);
+    const pool = room.questions.concat(room.useBank ? BANK : []);
     if (!pool.length) return ack && ack({ ok: false, error: 'Cadastrem uma pergunta ou liguem o banco de perguntas.' });
     room.players.forEach((p) => (p.score = 0));
     // Sorteia sem repetir: primeiro as perguntas que ainda não saíram nesta sala.
-    const fresh = pool.filter((q) => !room.used.has(q.text));
+    const fresh = pool.filter((q) => !room.used.has(q.key || q.text));
     let pick = shuffle(fresh).slice(0, room.limit);
     if (pick.length < room.limit) {
       // Acabaram as inéditas: completa com as já usadas e recomeça o ciclo.
@@ -291,8 +289,24 @@ io.on('connection', (socket) => {
       room.used = new Set();
       pick = shuffle(pick.concat(rest));
     }
-    pick.forEach((q) => room.used.add(q.text));
-    room.order = pick;
+    pick.forEach((q) => room.used.add(q.key || q.text));
+    // Pergunta do banco: sorteia uma das redações, de preferência uma que ainda não apareceu.
+    room.order = pick.map((q) => {
+      if (!q.texts) return q;
+      const unseen = q.texts.filter((t) => !room.usedTexts.has(t));
+      const from = unseen.length ? unseen : q.texts;
+      const text = from[Math.floor(Math.random() * from.length)];
+      room.usedTexts.add(text);
+      return { text, answer: q.answer, authorId: null, authorName: null };
+    });
+    // A última pergunta é sempre a mais longa da partida, ou seja, a que vale mais pontos.
+    if (room.order.length > 1) {
+      let longest = 0;
+      room.order.forEach((q, i) => {
+        if (tokenize(q.text).length > tokenize(room.order[longest].text).length) longest = i;
+      });
+      room.order.push(room.order.splice(longest, 1)[0]);
+    }
     room.qIndex = 0;
     room.starter = 0;
     startQuestion(room);
