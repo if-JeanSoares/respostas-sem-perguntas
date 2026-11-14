@@ -167,6 +167,68 @@ for (const [ano, jogo] of GOTY) {
   add([`Qual jogo venceu o prêmio de Jogo do Ano no The Game Awards de ${ano}?`, `Qual foi o Jogo do Ano do The Game Awards em ${ano}?`, `No The Game Awards de ${ano}, qual jogo levou o prêmio principal?`], jogo);
 }
 
+// ---------- Livros e autores ----------
+const BOOKS = [
+  ['Dom Quixote', 'Miguel de Cervantes/Cervantes'], ['Os Lusíadas', 'Luís de Camões/Camões'], ['O Pequeno Príncipe', 'Antoine de Saint-Exupéry/Saint-Exupéry/Exupéry'],
+  ['Cem Anos de Solidão', 'Gabriel García Márquez/García Márquez/Gabo'], ['1984', 'George Orwell/Orwell'], ['A Revolução dos Bichos', 'George Orwell/Orwell'],
+  ['O Senhor dos Anéis', 'J. R. R. Tolkien/Tolkien/JRR Tolkien'], ['Grande Sertão: Veredas', 'Guimarães Rosa/João Guimarães Rosa'], ['Vidas Secas', 'Graciliano Ramos'],
+  ['Capitães da Areia', 'Jorge Amado'], ['O Cortiço', 'Aluísio Azevedo'], ['Iracema', 'José de Alencar'], ['O Guarani', 'José de Alencar'],
+  ['Memórias Póstumas de Brás Cubas', 'Machado de Assis/Machado'], ['A Hora da Estrela', 'Clarice Lispector/Clarice'], ['Macunaíma', 'Mário de Andrade'],
+  ['O Alquimista', 'Paulo Coelho'], ['Auto da Compadecida', 'Ariano Suassuna/Suassuna'], ['Morte e Vida Severina', 'João Cabral de Melo Neto/João Cabral'],
+  ['Crime e Castigo', 'Dostoiévski/Fiódor Dostoiévski/Dostoievski'], ['Guerra e Paz', 'Tolstói/Liev Tolstói/Leon Tolstói/Tolstoi'],
+  ['A Divina Comédia', 'Dante Alighieri/Dante'], ['Odisseia', 'Homero'], ['A Metamorfose', 'Franz Kafka/Kafka'], ['Orgulho e Preconceito', 'Jane Austen/Austen'],
+  ['Frankenstein', 'Mary Shelley/Shelley'], ['Drácula', 'Bram Stoker/Stoker'], ['O Código Da Vinci', 'Dan Brown'], ['As Crônicas de Nárnia', 'C. S. Lewis/Lewis/CS Lewis'],
+  ['Ensaio sobre a Cegueira', 'José Saramago/Saramago'], ['O Nome da Rosa', 'Umberto Eco'], ['O Velho e o Mar', 'Ernest Hemingway/Hemingway'],
+  ['Moby Dick', 'Herman Melville/Melville'], ['Os Miseráveis', 'Victor Hugo'], ['O Conde de Monte Cristo', 'Alexandre Dumas/Dumas'],
+  ['Vinte Mil Léguas Submarinas', 'Júlio Verne/Jules Verne/Verne'], ['O Menino Maluquinho', 'Ziraldo'], ['As Crônicas de Gelo e Fogo', 'George R. R. Martin/George Martin/Martin/George RR Martin'],
+  ['O Iluminado', 'Stephen King'], ['O Hobbit', 'J. R. R. Tolkien/Tolkien/JRR Tolkien'], ['Quincas Borba', 'Machado de Assis/Machado'], ['Gabriela, Cravo e Canela', 'Jorge Amado'],
+];
+for (const [obra, autor] of BOOKS) {
+  add([`Quem é o autor ou a autora da famosa obra ${obra}?`, `O livro ${obra}, conhecido por leitores do mundo todo, foi escrito por quem?`, `Nas bibliotecas, o nome de quem aparece como autor de ${obra}?`], autor);
+}
+
+// ---------- Países e continentes ----------
+const CONTINENTS = [
+  ['do Japão', 'Ásia'], ['da Nigéria', 'África'], ['do Egito', 'África'], ['da Austrália', 'Oceania'], ['da Alemanha', 'Europa'],
+  ['do Canadá', 'América do Norte/América'], ['do Peru', 'América do Sul/América'], ['da Índia', 'Ásia'], ['da Tailândia', 'Ásia'], ['do Quênia', 'África'],
+  ['do Marrocos', 'África'], ['da Nova Zelândia', 'Oceania'], ['da Grécia', 'Europa'], ['do México', 'América do Norte/América'],
+  ['da Argentina', 'América do Sul/América'], ['da China', 'Ásia'], ['de Angola', 'África'], ['da Suécia', 'Europa'], ['do Vietnã', 'Ásia'],
+  ['de Portugal', 'Europa'], ['da Colômbia', 'América do Sul/América'], ['da Arábia Saudita', 'Ásia'], ['do Senegal', 'África'], ['da Polônia', 'Europa'],
+  ['da Coreia do Sul', 'Ásia'], ['da Etiópia', 'África'], ['da Mongólia', 'Ásia'], ['da Noruega', 'Europa'], ['do Chile', 'América do Sul/América'],
+  ['de Moçambique', 'África'], ['das Filipinas', 'Ásia'], ['da Hungria', 'Europa'], ['de Gana', 'África'], ['do Nepal', 'Ásia'], ['da Islândia', 'Europa'],
+  ['do Paquistão', 'Ásia'], ['da Tanzânia', 'África'], ['de Madagascar', 'África'], ['da Indonésia', 'Ásia'], ['do Uruguai', 'América do Sul/América'],
+  ['da Suíça', 'Europa'], ['do Irã', 'Ásia'], ['da Argélia', 'África'], ['de Fiji', 'Oceania'],
+];
+for (const [de, continente] of CONTINENTS) {
+  add([`Em qual continente do planeta fica o território ${de}?`, `No mapa-múndi, o território ${de} aparece em qual continente?`, `Quem viaja para conhecer as paisagens ${de} desembarca em qual continente?`], continente);
+}
+
+// ---------- Idiomas ----------
+const LANGUAGES = [
+  ['do Brasil', 'Português'], ['da Argentina', 'Espanhol/Castelhano'], ['da França', 'Francês'], ['da Alemanha', 'Alemão'], ['da Itália', 'Italiano'],
+  ['do Japão', 'Japonês'], ['da China', 'Mandarim/Chinês'], ['da Rússia', 'Russo'], ['do Egito', 'Árabe'], ['da Áustria', 'Alemão'],
+  ['do México', 'Espanhol/Castelhano'], ['de Angola', 'Português'], ['dos Estados Unidos', 'Inglês'], ['da Austrália', 'Inglês'], ['da Grécia', 'Grego'],
+  ['da Turquia', 'Turco'], ['da Holanda', 'Holandês/Neerlandês'], ['da Polônia', 'Polonês/Polaco'], ['da Coreia do Sul', 'Coreano'], ['do Irã', 'Persa/Farsi'],
+  ['de Israel', 'Hebraico'], ['da Suécia', 'Sueco'], ['de Portugal', 'Português'], ['da Tailândia', 'Tailandês'], ['do Vietnã', 'Vietnamita'],
+  ['da Arábia Saudita', 'Árabe'], ['de Moçambique', 'Português'], ['do Chile', 'Espanhol/Castelhano'], ['da Colômbia', 'Espanhol/Castelhano'],
+  ['da Hungria', 'Húngaro'], ['da Finlândia', 'Finlandês'], ['da Noruega', 'Norueguês'], ['da Dinamarca', 'Dinamarquês'], ['da Ucrânia', 'Ucraniano'], ['da Romênia', 'Romeno'],
+];
+for (const [de, idioma] of LANGUAGES) {
+  const no = de.startsWith('de ') ? de.replace(/^de /, 'em ') : de.replace(/^d/, 'n');
+  add([`Qual é o idioma oficial mais falado pela população ${de}?`, `Qual língua as crianças aprendem primeiro nas escolas ${de}?`, `Quem pretende morar ${no} precisa aprender a falar qual idioma?`], idioma);
+}
+
+// ---------- Estados e regiões do Brasil ----------
+const REGIONS = [
+  ['do Acre', 'Norte'], ['do Amapá', 'Norte'], ['do Amazonas', 'Norte'], ['do Pará', 'Norte'], ['de Rondônia', 'Norte'], ['de Roraima', 'Norte'], ['do Tocantins', 'Norte'],
+  ['de Alagoas', 'Nordeste'], ['da Bahia', 'Nordeste'], ['do Ceará', 'Nordeste'], ['do Maranhão', 'Nordeste'], ['da Paraíba', 'Nordeste'], ['de Pernambuco', 'Nordeste'],
+  ['do Piauí', 'Nordeste'], ['de Sergipe', 'Nordeste'], ['de Goiás', 'Centro-Oeste'], ['de Mato Grosso', 'Centro-Oeste'], ['de Mato Grosso do Sul', 'Centro-Oeste'],
+  ['do Espírito Santo', 'Sudeste'], ['de Minas Gerais', 'Sudeste'], ['do Rio de Janeiro', 'Sudeste'], ['de São Paulo', 'Sudeste'], ['do Paraná', 'Sul'], ['de Santa Catarina', 'Sul'],
+];
+for (const [de, regiao] of REGIONS) {
+  add([`O estado ${de} fica em qual das cinco regiões do Brasil?`, `Em qual das cinco regiões brasileiras está localizado o estado ${de}?`, `No mapa do Brasil, o estado ${de} pertence a qual região?`], `${regiao}/Região ${regiao}`);
+}
+
 // Só entram redações com pelo menos MIN_WORDS palavras, para a pergunta ter o que revelar.
 const MIN_WORDS = 8;
 const countWords = (t) => t.trim().replace(/\s*\?+\s*$/, '').split(/\s+/).length;
