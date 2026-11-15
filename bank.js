@@ -122,6 +122,18 @@ for (const [personagem, franquia] of CHARACTERS) {
   add([`No mundo dos games, ${personagem} é personagem de qual franquia de jogos?`, `Em qual franquia de jogos eletrônicos o jogador encontra ${personagem}?`, `${personagem} ficou famoso como personagem de qual série de jogos eletrônicos?`], franquia);
 }
 
+// ---------- Jogos eletrônicos: Jogo do Ano no The Game Awards ----------
+const GOTY = [
+  [2014, 'Dragon Age Inquisition/Dragon Age: Inquisition/Dragon Age'], [2015, 'The Witcher 3/The Witcher 3: Wild Hunt/Witcher 3'], [2016, 'Overwatch'],
+  [2017, 'The Legend of Zelda: Breath of the Wild/Zelda Breath of the Wild/Breath of the Wild/Zelda'], [2018, 'God of War'],
+  [2019, 'Sekiro/Sekiro: Shadows Die Twice/Sekiro Shadows Die Twice'], [2020, 'The Last of Us Part II/The Last of Us 2/The Last of Us Parte 2/The Last of Us Parte II/Last of Us 2'],
+  [2021, 'It Takes Two'], [2022, 'Elden Ring'], [2023, "Baldur's Gate 3/Baldurs Gate 3/Baldur's Gate III"], [2024, 'Astro Bot'],
+  [2025, 'Clair Obscur: Expedition 33/Clair Obscur Expedition 33/Expedition 33/Clair Obscur'],
+];
+for (const [ano, jogo] of GOTY) {
+  add([`Qual jogo venceu o prêmio de Jogo do Ano no The Game Awards de ${ano}?`, `Qual foi o Jogo do Ano do The Game Awards em ${ano}?`, `No The Game Awards de ${ano}, qual jogo levou o prêmio principal?`], jogo);
+}
+
 // ---------- Livros e autores ----------
 const BOOKS = [
   ['Dom Quixote', 'Miguel de Cervantes/Cervantes'], ['Os Lusíadas', 'Luís de Camões/Camões'], ['O Pequeno Príncipe', 'Antoine de Saint-Exupéry/Saint-Exupéry/Exupéry'],
