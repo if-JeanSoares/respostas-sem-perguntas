@@ -101,70 +101,25 @@ for (const [de, moeda] of CURRENCIES) {
 
 // ---------- Jogos eletrônicos: consoles ----------
 const CONSOLES = [
-  ['PlayStation 5', 'Sony'], ['Xbox Series X', 'Microsoft'], ['Nintendo Switch', null], ['Mega Drive', 'Sega'], ['Game Boy', 'Nintendo'],
-  ['Dreamcast', 'Sega'], ['Wii', 'Nintendo'], ['Super Nintendo', null], ['Master System', 'Sega'], ['PSP', 'Sony'], ['GameCube', 'Nintendo'],
-  ['Xbox 360', 'Microsoft'], ['Nintendo 64', null], ['Sega Saturn', null], ['PlayStation 2', 'Sony'], ['Game Gear', 'Sega'], ['Steam Deck', 'Valve'],
+  ['PlayStation 5', 'Sony'], ['Xbox Series X', 'Microsoft'], ['Mega Drive', 'Sega'], ['Game Boy', 'Nintendo'], ['Wii', 'Nintendo'],
+  ['Master System', 'Sega'], ['PSP', 'Sony'], ['Xbox 360', 'Microsoft'], ['PlayStation 2', 'Sony'], ['Switch', 'Nintendo'],
 ];
 for (const [consoleName, empresa] of CONSOLES) {
   if (empresa) add([`Qual empresa é a fabricante responsável pelo console de videogame ${consoleName}?`, `O console de videogame ${consoleName} foi criado e lançado por qual empresa?`, `No mercado de games, qual empresa colocou nas lojas o console ${consoleName}?`], empresa);
 }
 
-// ---------- Jogos eletrônicos: quem criou ----------
-const DEVS = [
-  ['Minecraft', 'Mojang'], ['Fortnite', 'Epic Games/Epic'], ['GTA V', 'Rockstar/Rockstar Games/Rockstar North'], ['The Witcher 3', 'CD Projekt Red/CD Projekt'],
-  ['League of Legends', 'Riot Games/Riot'], ['Counter-Strike', 'Valve'], ['Overwatch', 'Blizzard/Blizzard Entertainment'], ['Dark Souls', 'FromSoftware/From Software'],
-  ['Free Fire', 'Garena'], ['Valorant', 'Riot Games/Riot'], ['Among Us', 'Innersloth'], ['Cyberpunk 2077', 'CD Projekt Red/CD Projekt'],
-  ['Elden Ring', 'FromSoftware/From Software'], ['Red Dead Redemption 2', 'Rockstar/Rockstar Games'], ["Assassin's Creed", 'Ubisoft'],
-  ['Dota 2', 'Valve'], ['Half-Life', 'Valve'], ['World of Warcraft', 'Blizzard/Blizzard Entertainment'], ['Diablo', 'Blizzard/Blizzard Entertainment/Blizzard North'],
-  ['Street Fighter', 'Capcom'], ['Resident Evil', 'Capcom'], ['Final Fantasy', 'Square Enix/Square/Squaresoft'], ['Metal Gear Solid', 'Konami'],
-  ['Pac-Man', 'Namco/Bandai Namco'], ['Tekken', 'Namco/Bandai Namco'], ['Clash of Clans', 'Supercell'], ['Brawl Stars', 'Supercell'],
-  ['Angry Birds', 'Rovio'], ['Candy Crush', 'King'], ['Genshin Impact', 'miHoYo/HoYoverse'], ['Hollow Knight', 'Team Cherry'],
-  ['Rocket League', 'Psyonix'], ['Apex Legends', 'Respawn/Respawn Entertainment'], ['The Last of Us', 'Naughty Dog'], ['Uncharted', 'Naughty Dog'],
-  ['God of War', 'Santa Monica Studio/Santa Monica/Sony Santa Monica/Sony'], ['Halo', 'Bungie/343 Industries/Halo Studios'], ['Monster Hunter', 'Capcom'], ['Mega Man', 'Capcom'],
-  ['Castlevania', 'Konami'], ['Far Cry', 'Ubisoft'], ['Skyrim', 'Bethesda/Bethesda Game Studios'], ['Fallout 4', 'Bethesda/Bethesda Game Studios'],
-  ['Hades', 'Supergiant Games/Supergiant'], ['Baldur\'s Gate 3', 'Larian Studios/Larian'], ['Horizon Zero Dawn', 'Guerrilla Games/Guerrilla'],
-];
-for (const [jogo, empresa] of DEVS) {
-  add([`Qual empresa ou estúdio é responsável pelo desenvolvimento do jogo ${jogo}?`, `O jogo eletrônico ${jogo} foi criado e desenvolvido por qual empresa?`, `No mundo dos games, qual estúdio desenvolveu o jogo ${jogo}?`], empresa);
-}
-
 // ---------- Jogos eletrônicos: personagem -> franquia ----------
 const CHARACTERS = [
-  ['Link', 'The Legend of Zelda/Zelda/Legend of Zelda'], ['Kratos', 'God of War'], ['Master Chief', 'Halo'], ['Lara Croft', 'Tomb Raider'],
-  ['Solid Snake', 'Metal Gear/Metal Gear Solid'], ['Geralt de Rívia', 'The Witcher/Witcher'], ['Pikachu', 'Pokémon'], ['Ryu', 'Street Fighter'],
-  ['Scorpion', 'Mortal Kombat'], ['Cloud Strife', 'Final Fantasy/Final Fantasy VII/Final Fantasy 7'], ['Nathan Drake', 'Uncharted'],
-  ['Ezio Auditore', "Assassin's Creed/Assassins Creed"], ['Arthur Morgan', 'Red Dead Redemption/Red Dead Redemption 2/Red Dead'],
-  ['Ellie', 'The Last of Us/Last of Us'], ['Leon Kennedy', 'Resident Evil'], ['Samus Aran', 'Metroid'], ['Tails', 'Sonic/Sonic the Hedgehog'],
-  ['Luigi', 'Mario/Super Mario/Super Mario Bros'], ['Aloy', 'Horizon/Horizon Zero Dawn/Horizon Forbidden West'], ['Jinx', 'League of Legends/LoL'],
-  ['Tracer', 'Overwatch'], ['Gordon Freeman', 'Half-Life'], ['Dante', 'Devil May Cry'], ['Sub-Zero', 'Mortal Kombat'], ['Chun-Li', 'Street Fighter'],
-  ['Ganondorf', 'The Legend of Zelda/Zelda/Legend of Zelda'], ['Bowser', 'Mario/Super Mario/Super Mario Bros'], ['Doutor Eggman', 'Sonic/Sonic the Hedgehog'],
-  ['Sephiroth', 'Final Fantasy/Final Fantasy VII/Final Fantasy 7'], ['Tommy Vercetti', 'GTA/Grand Theft Auto/GTA Vice City'],
-  ['Carl Johnson, o CJ', 'GTA/Grand Theft Auto/GTA San Andreas'], ['Jill Valentine', 'Resident Evil'], ['Pyramid Head', 'Silent Hill'],
-  ['Agente 47', 'Hitman'], ['Jett', 'Valorant'], ['Yasuo', 'League of Legends/LoL'], ['Kazuya Mishima', 'Tekken'], ['GLaDOS', 'Portal'],
-  ['Isaac Clarke', 'Dead Space'], ['Marcus Fenix', 'Gears of War/Gears'], ['Comandante Shepard', 'Mass Effect'], ['Sans', 'Undertale'],
-  ['Zagreus', 'Hades'], ['Malenia', 'Elden Ring'], ['Alucard', 'Castlevania'], ['Fox McCloud', 'Star Fox/Starfox'], ['Creeper', 'Minecraft'],
-  ['Yoshi', 'Mario/Super Mario/Super Mario Bros'], ['Tom Nook', 'Animal Crossing'], ['Claptrap', 'Borderlands'], ['Capitão Price', 'Call of Duty/COD/Modern Warfare'],
-  ['Lúcio', 'Overwatch'], ['Blanka', 'Street Fighter'], ['Eddy Gordo', 'Tekken'], ['Raze', 'Valorant'], ['Knuckles', 'Sonic/Sonic the Hedgehog'],
-  ['Charizard', 'Pokémon'], ['Diddy Kong', 'Donkey Kong'], ['Joel Miller', 'The Last of Us/Last of Us'], ['Trevor Philips', 'GTA/Grand Theft Auto/GTA V/GTA 5'],
-  ['Ada Wong', 'Resident Evil'], ['Liu Kang', 'Mortal Kombat'], ['Ken Masters', 'Street Fighter'], ['Teemo', 'League of Legends/LoL'],
-  ['Atreus', 'God of War'], ['Cortana', 'Halo'], ['Big Boss', 'Metal Gear/Metal Gear Solid'], ['Ciri', 'The Witcher/Witcher'],
-  ['Mewtwo', 'Pokémon'], ['Princesa Peach', 'Mario/Super Mario/Super Mario Bros'], ['Tifa Lockhart', 'Final Fantasy/Final Fantasy VII/Final Fantasy 7'],
-  ['Vault Boy', 'Fallout'], ['Ori', 'Ori and the Blind Forest/Ori/Ori and the Will of the Wisps'], ['Madeline', 'Celeste'],
+  ['Link', 'The Legend of Zelda/Zelda/Legend of Zelda'], ['Kratos', 'God of War'], ['Lara Croft', 'Tomb Raider'], ['Pikachu', 'Pokémon'],
+  ['Ryu', 'Street Fighter'], ['Scorpion', 'Mortal Kombat'], ['Tails', 'Sonic/Sonic the Hedgehog'], ['Luigi', 'Mario/Super Mario/Super Mario Bros'],
+  ['Sub-Zero', 'Mortal Kombat'], ['Chun-Li', 'Street Fighter'], ['Bowser', 'Mario/Super Mario/Super Mario Bros'], ['Doutor Eggman', 'Sonic/Sonic the Hedgehog'],
+  ['Carl Johnson, o CJ', 'GTA/Grand Theft Auto/GTA San Andreas'], ['Creeper', 'Minecraft'], ['Yoshi', 'Mario/Super Mario/Super Mario Bros'],
+  ['Blanka', 'Street Fighter'], ['Knuckles', 'Sonic/Sonic the Hedgehog'], ['Charizard', 'Pokémon'], ['Mewtwo', 'Pokémon'],
+  ['Princesa Peach', 'Mario/Super Mario/Super Mario Bros'], ['Steve', 'Minecraft'], ['Toad', 'Mario/Super Mario/Super Mario Bros'],
+  ['Liu Kang', 'Mortal Kombat'], ['Bulbasaur', 'Pokémon'], ['Wario', 'Mario/Super Mario/Super Mario Bros/Wario'],
 ];
 for (const [personagem, franquia] of CHARACTERS) {
   add([`No mundo dos games, ${personagem} é personagem de qual franquia de jogos?`, `Em qual franquia de jogos eletrônicos o jogador encontra ${personagem}?`, `${personagem} ficou famoso como personagem de qual série de jogos eletrônicos?`], franquia);
-}
-
-// ---------- Jogos eletrônicos: Jogo do Ano no The Game Awards ----------
-const GOTY = [
-  [2014, 'Dragon Age Inquisition/Dragon Age: Inquisition/Dragon Age'], [2015, 'The Witcher 3/The Witcher 3: Wild Hunt/Witcher 3'], [2016, 'Overwatch'],
-  [2017, 'The Legend of Zelda: Breath of the Wild/Zelda Breath of the Wild/Breath of the Wild/Zelda'], [2018, 'God of War'],
-  [2019, 'Sekiro/Sekiro: Shadows Die Twice/Sekiro Shadows Die Twice'], [2020, 'The Last of Us Part II/The Last of Us 2/The Last of Us Parte 2/The Last of Us Parte II/Last of Us 2'],
-  [2021, 'It Takes Two'], [2022, 'Elden Ring'], [2023, "Baldur's Gate 3/Baldurs Gate 3/Baldur's Gate III"], [2024, 'Astro Bot'],
-  [2025, 'Clair Obscur: Expedition 33/Clair Obscur Expedition 33/Expedition 33/Clair Obscur'],
-];
-for (const [ano, jogo] of GOTY) {
-  add([`Qual jogo venceu o prêmio de Jogo do Ano no The Game Awards de ${ano}?`, `Qual foi o Jogo do Ano do The Game Awards em ${ano}?`, `No The Game Awards de ${ano}, qual jogo levou o prêmio principal?`], jogo);
 }
 
 // ---------- Livros e autores ----------
